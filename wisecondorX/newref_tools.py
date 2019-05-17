@@ -9,6 +9,8 @@ from scipy.signal import argrelextrema
 from sklearn.decomposition import PCA
 from sklearn.mixture import GaussianMixture
 
+from wisecondorX.props import ChromosomeMap
+
 '''
 A Gaussian mixture model is fitted against
 all one-dimensional reference y-fractions.
@@ -17,12 +19,14 @@ and one for females. The local minimum will
 serve as the cut-off point.
 '''
 
+chromosomeMap = ChromosomeMap()
+
 
 def train_gender_model(samples):
     genders = np.empty(len(samples), dtype='object')
     y_fractions = []
     for sample in samples:
-        y_fractions.append(float(np.sum(sample['24'])) / float(np.sum([np.sum(sample[x]) for x in sample.keys()])))
+        y_fractions.append(float(np.sum(sample[str(chromosomeMap.get_y_index())])) / float(np.sum([np.sum(sample[x]) for x in sample.keys()])))
     y_fractions = np.array(y_fractions)
 
     gmm = GaussianMixture(n_components=2, covariance_type='full', reg_covar=1e-99, max_iter=10000, tol=1e-99)
@@ -62,7 +66,7 @@ def get_mask(samples):
     bins_per_chr = []
     sample_count = len(samples)
 
-    for chr in range(1, 25):
+    for chr in range(1, chromosomeMap.get_max() + 1):
         max_len = max([sample[str(chr)].shape[0] for sample in samples])
         this_chr = np.zeros((max_len, sample_count), dtype=float)
         bins_per_chr.append(max_len)
@@ -154,7 +158,7 @@ def get_reference(pca_corrected_data, masked_bins_per_chr, masked_bins_per_chr_c
         if end_num < end:
             end = end_num
 
-        if len(masked_bins_per_chr_cum) > 22 and chr != 22 and chr != 23:
+        if len(masked_bins_per_chr_cum) > chromosomeMap.get_x_index() - 1 and chr != chromosomeMap.get_x_index() - 1 and chr != chromosomeMap.get_x_index():
             part_indexes = np.zeros((end - start, ref_size), dtype=np.int32)
             part_distances = np.ones((end - start, ref_size))
             big_indexes.extend(part_indexes)

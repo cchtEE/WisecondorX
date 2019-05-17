@@ -2,6 +2,7 @@
 
 from wisecondorX.predict_tools import coverage_normalize_and_mask, project_pc, \
     get_optimal_cutoff, get_weights, normalize_repeat, inflate_results
+from wisecondorX.props import ChromosomeMap
 
 '''
 Control function that executes following
@@ -11,6 +12,8 @@ normalization strategies:
 - within-sample normalization
 '''
 
+chromosomeMap = ChromosomeMap()
+
 
 def normalize(args, sample, ref_file, ref_gender):
     if ref_gender == 'A':
@@ -19,7 +22,7 @@ def normalize(args, sample, ref_file, ref_gender):
         ct = 0
     else:
         ap = '.{}'.format(ref_gender)
-        cp = 22
+        cp = chromosomeMap.get_x_index() - 1
         ct = ref_file['masked_bins_per_chr_cum{}'.format(ap)][cp - 1]
 
     sample = coverage_normalize_and_mask(sample, ref_file, ap)

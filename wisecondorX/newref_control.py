@@ -4,11 +4,12 @@ import copy
 import logging
 import os
 import sys
-
-import numpy as np
 from concurrent import futures
 
+import numpy as np
+
 from wisecondorX.newref_tools import normalize_and_mask, train_pca, get_reference
+from wisecondorX.props import ChromosomeMap
 
 '''
 Outputs preparation files of read depth normalized
@@ -18,15 +19,16 @@ executed three times. Once for autosomes, once for XX
 gonosomes (if enough females are included) and once
 for XY gonosomes (if enough males are included).
 '''
+chromosomeMap = ChromosomeMap()
 
 
 def tool_newref_prep(args, samples, gender, mask, bins_per_chr):
     if gender == 'A':
-        last_chr = 22
+        last_chr = chromosomeMap.get_x_index() - 1
     elif gender == 'F':
-        last_chr = 23
+        last_chr = chromosomeMap.get_x_index()
     else:
-        last_chr = 24
+        last_chr = chromosomeMap.get_y_index()
 
     bins_per_chr = bins_per_chr[:last_chr]
     mask = mask[:np.sum(bins_per_chr)]

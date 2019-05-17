@@ -5,10 +5,13 @@ import os
 import numpy as np
 
 from wisecondorX.overall_tools import exec_R, get_z_score, get_median_segment_variance
+from wisecondorX.props import ChromosomeMap
 
 '''
 Writes plots.
 '''
+
+chromosomeMap = ChromosomeMap()
 
 
 def exec_write_plots(rem_input, results):
@@ -52,10 +55,10 @@ def _generate_bins_bed(rem_input, results):
 
     for chr in range(len(results_r)):
         chr_name = str(chr + 1)
-        if chr_name == '23':
-            chr_name = 'X'
-        if chr_name == '24':
-            chr_name = 'Y'
+        if chr_name == str(chromosomeMap.get_x_index()):
+            chr_name = chromosomeMap.get_as_chr_name_str(chromosomeMap.get_x_index())
+        if chr_name == str(chromosomeMap.get_y_index()):
+            chr_name = chromosomeMap.get_as_chr_name_str(chromosomeMap.get_y_index())
         feat = 1
         for i in range(len(results_r[chr])):
             r = results_r[chr][i]
@@ -79,18 +82,21 @@ def _generate_segments_and_aberrations_bed(rem_input, results):
 
     for segment in results['results_c']:
         chr_name = str(segment[0] + 1)
-        if chr_name == '23':
-            chr_name = 'X'
-        if chr_name == '24':
-            chr_name = 'Y'
+        x = chromosomeMap.get_as_chr_name_str(chromosomeMap.get_x_index())
+        y = chromosomeMap.get_as_chr_name_str(chromosomeMap.get_y_index())
+
+        if chr_name == str(chromosomeMap.get_x_index()):
+            chr_name = x
+
+        if chr_name == str(chromosomeMap.get_y_index()):
+            chr_name = y
         row = [chr_name,
                int(segment[1] * rem_input['binsize'] + 1),
                int(segment[2] * rem_input['binsize']),
                segment[4], segment[3]]
         segments_file.write('{}\n'.format('\t'.join([str(x) for x in row])))
         ploidy = 2
-
-        if (chr_name == 'X' or chr_name == 'Y') and rem_input['actual_gender'] == 'M':
+        if (chr_name == x or chr_name == y) and rem_input['actual_gender'] == 'M':
             ploidy = 1
         if rem_input['args'].beta is not None:
             if float(segment[4]) > __get_aberration_cutoff(rem_input['args'].beta, ploidy)[1]:
@@ -130,10 +136,10 @@ def _generate_chr_statistics_file(rem_input, results):
     for chr in range(len(results['results_r'])):
 
         chr_name = str(chr + 1)
-        if chr_name == '23':
-            chr_name = 'X'
-        if chr_name == '24':
-            chr_name = 'Y'
+        if chr_name == str(chromosomeMap.get_x_index()):
+            chr_name = chromosomeMap.get_as_chr_name_str(chromosomeMap.get_x_index())
+        if chr_name == str(chromosomeMap.get_y_index()):
+            chr_name = chromosomeMap.get_as_chr_name_str(chromosomeMap.get_y_index())
 
         row = [chr_name,
                chr_ratio_means[chr],

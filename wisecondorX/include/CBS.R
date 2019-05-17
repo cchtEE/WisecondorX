@@ -27,9 +27,9 @@ binsize <- as.numeric(input$binsize)
 out.file <- as.character(input$outfile)
 
 if (gender == "M"){
-    chrs = 1:24
+    chrs = 1:31
 } else {
-    chrs = 1:23
+    chrs = 1:30
 }
 
 # prepare for CBS

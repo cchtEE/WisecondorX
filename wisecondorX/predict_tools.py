@@ -7,15 +7,17 @@ from scipy.stats import norm
 from sklearn.decomposition import PCA
 
 from wisecondorX.overall_tools import exec_R, get_z_score
+from wisecondorX.props import ChromosomeMap
 
 '''
 Returns gender based on Gaussian mixture
 model trained during newref phase.
 '''
 
+chromosomeMap = ChromosomeMap()
 
 def predict_gender(sample, trained_cutoff):
-    Y_fraction = float(np.sum(sample['24'])) / float(np.sum([np.sum(sample[x]) for x in sample.keys()]))
+    Y_fraction = float(np.sum(sample[str(chromosomeMap.get_y_index())])) / float(np.sum([np.sum(sample[x]) for x in sample.keys()]))
     if Y_fraction > trained_cutoff:
         return 'M'
     else:
@@ -197,7 +199,7 @@ def apply_blacklist(rem_input, results):
     for chr in blacklist.keys():
         for s_e in blacklist[chr]:
             for pos in range(s_e[0], s_e[1]):
-                if len(results['results_r']) < 24 and chr == 23:
+                if len(results['results_r']) < chromosomeMap.get_y_index() and chr == chromosomeMap.get_x_index():
                     continue
                 if pos >= len(results['results_r'][chr]) or pos < 0:
                     continue
@@ -212,10 +214,10 @@ def _import_bed(rem_input):
         chr_name, s, e = line.strip().split('\t')
         if chr_name[:3] == 'chr':
             chr_name = chr_name[3:]
-        if chr_name == 'X':
-            chr_name = '23'
-        if chr_name == 'Y':
-            chr_name = '24'
+        if chr_name == chromosomeMap.get_as_chr_name_str(chromosomeMap.get_x_index()):
+            chr_name = str(chromosomeMap.get_x_index())
+        if chr_name == chromosomeMap.get_as_chr_name_str(chromosomeMap.get_y_index()):
+            chr_name = str(chromosomeMap.get_y_index())
         chr = int(chr_name) - 1
         if chr not in bed.keys():
             bed[chr] = []

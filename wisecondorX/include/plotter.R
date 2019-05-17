@@ -57,15 +57,15 @@ weights <- unlist(input$results_w)
 weights[which(weights == 0)] <- NA
 
 if (gender == "M"){
-  chrs = 1:24
+  chrs = 1:31
 } else {
-  chrs = 1:23
+  chrs = 1:30
 }
 bins.per.chr <- sapply(chrs, FUN=function(x) length(unlist(input$results_r[x])))
 
 labels = as.vector(sapply(chrs, FUN=function(x) paste0("chr", x)))
-labels = replace(labels, labels == "chr23", "chrX")
-labels = replace(labels, labels == "chr24", "chrY")
+labels = replace(labels, labels == "chr30", "chrX")
+labels = replace(labels, labels == "chr31", "chrY")
 
 # define chromosome positions
 
@@ -116,7 +116,7 @@ png(paste0(out.dir, "/genome_wide.png"), width=14,height=10,units="in",res=512,p
 
 l.matrix <- matrix(rep(1, 100), 10, 25, byrow=T)
 for (i in 1:7){
-  l.matrix <- rbind(l.matrix, c(rep(2, 22),rep(3, 3)))
+  l.matrix <- rbind(l.matrix, c(rep(2, 29),rep(3, 3)))
 }
 
 layout(l.matrix)
@@ -134,7 +134,7 @@ plot.constitutionals <- function(ploidy, start, end){
 }
 
 genome.len <- chr.ends[length(chr.ends)]
-autosome.len <- chr.ends[23]
+autosome.len <- chr.ends[30]
 if (gender == "F"){
   plot.constitutionals(2, -genome.len * 0.025, genome.len * 1.025)
 } else {
@@ -156,7 +156,7 @@ for (ab in input$results_c){
   z = as.double(info[4])
   height = as.double(info[5])
   ploidy = 2
-  if ((chr == 23 | chr == 24) & gender == "M"){
+  if ((chr == 30 | chr == 31) & gender == "M"){
     ploidy = 1
   }
 
@@ -224,19 +224,19 @@ for (ab in input$results_c){
 # boxplots
 
 par(mgp=c(2.4,0.5,0))
-boxplot(box.list[1:22], ylim=c(min(l.whis.per.chr[1:22], na.rm=T),
-                               max(h.whis.per.chr[1:22], na.rm=T)), bg=black,
+boxplot(box.list[1:29], ylim=c(min(l.whis.per.chr[1:29], na.rm=T),
+                               max(h.whis.per.chr[1:29], na.rm=T)), bg=black,
         axes=F, outpch=16, ylab=expression('log'[2]*'(ratio)'))
 
 par(xpd=NA)
-text(1:22, par("usr")[3], labels=labels[1:22], srt=45, pos=1)
+text(1:20, par("usr")[3], labels=labels[1:29], srt=45, pos=1)
 axis(2, tick=T, cex.lab=2, col=black, las=1, tcl=0.5)
 par(xpd=F)
 
 plot.constitutionals(2, 0, 23)
 
-y.sex.down = min(l.whis.per.chr[23:length(chrs)], na.rm=T)
-y.sex.up = max(h.whis.per.chr[23:length(chrs)], na.rm=T)
+y.sex.down = min(l.whis.per.chr[30:length(chrs)], na.rm=T)
+y.sex.up = max(h.whis.per.chr[30:length(chrs)], na.rm=T)
 
 if(any(is.infinite(c(y.sex.down, y.sex.up)))){
   y.sex.down = 0
@@ -244,11 +244,11 @@ if(any(is.infinite(c(y.sex.down, y.sex.up)))){
 }
 
 par(mar=c(2.5,3,1,1))
-boxplot(box.list[23:length(chrs)], ylim=c(y.sex.down, y.sex.up),
+boxplot(box.list[30:length(chrs)], ylim=c(y.sex.down, y.sex.up),
         bg=black, axes=F, outpch=16, ylab='')
 
 par(xpd=NA)
-text(1:(length(chrs) - 22), par("usr")[3], labels=labels[23:length(chrs)], srt=45, pos=1)
+text(1:(length(chrs) - 29), par("usr")[3], labels=labels[30:length(chrs)], srt=45, pos=1)
 axis(2, tick=T, cex.lab=2, col=black, las=1, tcl=0.5)
 par(xpd=F)
 
@@ -297,7 +297,7 @@ for (c in chrs){
   if (gender == "F"){
     plot.constitutionals(2, chr.ends[c] - bins.per.chr[c] * 0.02, chr.ends[c+1] + bins.per.chr[c] * 0.02)
   } else {
-    if (c == 23 | c == 24){
+    if (c == 30 | c == 31){
       plot.constitutionals(1, chr.ends[c] - bins.per.chr[c] * 0.02, chr.ends[c+1] + bins.per.chr[c] * 0.02)
     } else {
       plot.constitutionals(2, chr.ends[c] - bins.per.chr[c] * 0.02, chr.ends[c+1] + bins.per.chr[c] * 0.02)

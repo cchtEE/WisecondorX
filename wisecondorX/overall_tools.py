@@ -8,10 +8,14 @@ import sys
 
 import numpy as np
 
+from wisecondorX.props import ChromosomeMap
+
 '''
 Scales the bin size of a sample.npz to the one  
 requested for the reference
 '''
+
+chromosomeMap = ChromosomeMap()
 
 
 def scale_sample(sample, from_size, to_size):
@@ -42,8 +46,8 @@ Levels gonosomal reads with the one at the autosomes.
 
 def gender_correct(sample, gender):
     if gender == 'M':
-        sample['23'] = sample['23'] * 2
-        sample['24'] = sample['24'] * 2
+        sample[str(chromosomeMap.get_x_index())] = sample[str(chromosomeMap.get_x_index())] * 2
+        sample[str(chromosomeMap.get_y_index())] = sample[str(chromosomeMap.get_y_index())] * 2
 
     return sample
 
