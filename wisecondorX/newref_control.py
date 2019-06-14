@@ -4,12 +4,11 @@ import copy
 import logging
 import os
 import sys
-from concurrent import futures
 
 import numpy as np
+from concurrent import futures
 
 from wisecondorX.newref_tools import normalize_and_mask, train_pca, get_reference
-from wisecondorX.props import ChromosomeMap
 
 '''
 Outputs preparation files of read depth normalized
@@ -19,16 +18,15 @@ executed three times. Once for autosomes, once for XX
 gonosomes (if enough females are included) and once
 for XY gonosomes (if enough males are included).
 '''
-chromosomeMap = ChromosomeMap()
 
 
 def tool_newref_prep(args, samples, gender, mask, bins_per_chr):
     if gender == 'A':
-        last_chr = chromosomeMap.get_x_index() - 1
+        last_chr = 29
     elif gender == 'F':
-        last_chr = chromosomeMap.get_x_index()
+        last_chr = 30
     else:
-        last_chr = chromosomeMap.get_y_index()
+        last_chr = 31
 
     bins_per_chr = bins_per_chr[:last_chr]
     mask = mask[:np.sum(bins_per_chr)]
@@ -128,7 +126,7 @@ def tool_newref_post(args, cpus):
     big_null_ratios = []
     for part in range(1, cpus + 1):
         infile = '{}_{}.npz'.format(args.partfile, str(part))
-        npzdata_part = np.load(infile, encoding='latin1')
+        npzdata_part = np.load(infile, encoding='latin1', allow_pickle=True)
         big_indexes.extend(npzdata_part['indexes'])
         big_distances.extend(npzdata_part['distances'])
         big_null_ratios.extend(npzdata_part['null_ratios'])

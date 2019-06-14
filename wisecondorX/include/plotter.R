@@ -114,7 +114,7 @@ color.XX = c(color.CC, color.AA, color.BB)
 
 png(paste0(out.dir, "/genome_wide.png"), width=14,height=10,units="in",res=512,pointsize=18)
 
-l.matrix <- matrix(rep(1, 100), 10, 25, byrow=T)
+l.matrix <- matrix(1, 10, 32, byrow=T)
 for (i in 1:7){
   l.matrix <- rbind(l.matrix, c(rep(2, 29),rep(3, 3)))
 }
@@ -229,11 +229,11 @@ boxplot(box.list[1:29], ylim=c(min(l.whis.per.chr[1:29], na.rm=T),
         axes=F, outpch=16, ylab=expression('log'[2]*'(ratio)'))
 
 par(xpd=NA)
-text(1:20, par("usr")[3], labels=labels[1:29], srt=45, pos=1)
+text(1:29, par("usr")[3], labels=labels[1:29], srt=45, pos=1)
 axis(2, tick=T, cex.lab=2, col=black, las=1, tcl=0.5)
 par(xpd=F)
 
-plot.constitutionals(2, 0, 23)
+plot.constitutionals(2, 0, 30)
 
 y.sex.down = min(l.whis.per.chr[30:length(chrs)], na.rm=T)
 y.sex.up = max(h.whis.per.chr[30:length(chrs)], na.rm=T)

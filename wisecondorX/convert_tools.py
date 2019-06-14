@@ -5,19 +5,15 @@ import logging
 import numpy as np
 import pysam
 
-from wisecondorX.props import ChromosomeMap
-
 '''
 Converts bam file to numpy array by transforming
 individual reads to counts per bin.
 '''
 
-chromosome_map = ChromosomeMap()
-
 
 def convert_bam(args):
     bins_per_chr = dict()
-    for chr in range(1, chromosome_map.get_max() + 1):
+    for chr in range(1, 32):
         bins_per_chr[str(chr)] = None
 
     logging.info('Importing data ...')
@@ -39,11 +35,7 @@ def convert_bam(args):
         chr_name = chr
         if chr_name[:3].lower() == 'chr':
             chr_name = chr_name[3:]
-
-        x = chromosome_map.get_as_chr_name_str(chromosome_map.get_x_index())
-        y = chromosome_map.get_as_chr_name_str(chromosome_map.get_y_index())
-
-        if chr_name not in bins_per_chr and chr_name != x and chr_name != y:
+        if chr_name not in bins_per_chr and chr_name != 'X' and chr_name != 'Y':
             continue
 
         logging.info('Working at {}; processing {} bins'
@@ -51,10 +43,10 @@ def convert_bam(args):
         counts = np.zeros(int(bam_file.lengths[index] / float(args.binsize) + 1), dtype=np.int32)
         bam_chr = bam_file.fetch(chr)
 
-        if chr_name == x:
-            chr_name = str(chromosome_map.get_x_index())
-        if chr_name == y:
-            chr_name = str(chromosome_map.get_y_index())
+        if chr_name == 'X':
+            chr_name = '30'
+        if chr_name == 'Y':
+            chr_name = '31'
 
         if args.paired:
 
